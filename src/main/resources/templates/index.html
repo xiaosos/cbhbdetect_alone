@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<p>
+<h1>请输入号码</h1>
+    <form action="/detect" th:action="@{/detect}">
+
+    <input type="text" name="cardnum">
+    <input type="submit" value="探测">
+
+</form>
+
+
+<!--<th:block th:with="total=0">-->
+<table th:border="5">
+    <thead>
+    <tr>
+        <th>卡号</th>
+        <th>日期</th>
+        <th>信息</th>
+        <!--<th>结果</th>-->
+        <th>金额</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="detect : ${detectList}" >
+        <td th:text="${detect.cardnum}"></td>
+        <td th:text="${detect.date}"></td>
+        <td th:text="${detect.message}"></td>
+        <!--<td th:text="${detect.detectType}"></td>-->
+        <td th:text="${detect.amt}"></td>
+    </tr>
+    <tr>
+        <!--<td colspan="4" />-->
+        <th:block th:if="${detectList}">
+            <td colspan="4"><b th:text="|可以开票的总额:  ${#aggregates.sum(detectList.![amt])} |" /></td>
+        </th:block>
+    </tr>
+    </tbody>
+</table>
+
+     <!--<p th:text="可以开票的总额:${total}" />-->
+</p>
+<!--</th:block>-->
+</body>
+</html>

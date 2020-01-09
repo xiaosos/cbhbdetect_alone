@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://192.168.123.11:3306/test?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+    driver-class-name: com.mysql.jdbc.Driver
+  thymeleaf:
+    cache: false
+  #设置thymeleaf页面的编码
+    encoding: UTF-8
+    mode: HTML
+    suffix: .html
+    prefix: classpath:/templates/
+mybatis:
+  mapper-locations: classpath*:com/cbhb/dao/**/*.xml
+  type-aliases-package: com.cbhb.dao.entity
+
+logging:
+  level:
+    com:
+      cbhb:
+        mapper: debug
+
+logfilepath: d:/test/
+imgPath: d:/test/
+server:
+  port: 8888
