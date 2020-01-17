@@ -33,21 +33,25 @@ public class CronJob extends QuartzJobBean {
         String date = minusDays.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         Set<String> cardnums = detectService.filter90cardnum();
         for(String cardnum: cardnums){
-            if(detectService.isSafe(cardnum,logfilepath)){
-                DetectAndDetail dad = new DetectAndDetail(imgPath);
-                dad.getCookie();
-                dad.getYZM();
-                for (int i = 0; i < 500; i++) {
-                    if (dad.buildSession("" + i, cardnum)) {
-                        System.out.println("Check Ok !!!");
-                        break;
+            try {
+                if (detectService.isSafe(cardnum, logfilepath)) {
+                    DetectAndDetail dad = new DetectAndDetail(imgPath);
+                    dad.getCookie();
+                    dad.getYZM();
+                    for (int i = 0; i < 500; i++) {
+                        if (dad.buildSession("" + i, cardnum)) {
+                            System.out.println("Check Ok !!!");
+                            break;
+                        }
+                        if (i >= 300) throw new RuntimeException("验证码未通过......");
                     }
-                    if (i >= 300) throw new RuntimeException("验证码未通过......");
-                }
-                DetectResultDto dto = dad.find(cardnum, date);
-                String pdfFilePath = pdfPath+"/" + cardnum + "-" + date + "-" + dto.getAmt() + ".pdf";
-                dad.download(dad.getDetail(), pdfFilePath);
+                    DetectResultDto dto = dad.find(cardnum, date);
+                    String pdfFilePath = pdfPath + "/" + cardnum + "-" + date + "-" + dto.getAmt() + ".pdf";
+                    dad.download(dad.getDetail(), pdfFilePath);
 
+                }
+            }catch (Exception e){
+                continue;
             }
         }
 
