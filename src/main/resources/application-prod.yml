@@ -7,6 +7,7 @@ spring:
 
 
 logfilepath: /tmp/log
+pdfPath: /tmp/fp/
 server:
   port: 80
 

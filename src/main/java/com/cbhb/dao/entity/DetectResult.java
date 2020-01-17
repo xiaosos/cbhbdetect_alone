@@ -1,6 +1,19 @@
 package com.cbhb.dao.entity;
 
 public class DetectResult {
+    @Override
+    public String toString() {
+        return "DetectResult{" +
+                "id=" + id +
+                ", cardnum='" + cardnum + '\'' +
+                ", date='" + date + '\'' +
+                ", message='" + message + '\'' +
+                ", detecttype='" + detecttype + '\'' +
+                ", amt=" + amt +
+                ", detecttime='" + detecttime + '\'' +
+                '}';
+    }
+
     private Integer id;
 
     private String cardnum;

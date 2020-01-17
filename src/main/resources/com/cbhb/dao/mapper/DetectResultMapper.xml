@@ -1,29 +1,72 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.cbhb.dao.mapper.DetectResultMapper" >
-  <resultMap id="BaseResultMap" type="com.cbhb.dao.entity.DetectResult" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="cardnum" property="cardnum" jdbcType="VARCHAR" />
-    <result column="date" property="date" jdbcType="VARCHAR" />
-    <result column="message" property="message" jdbcType="VARCHAR" />
-    <result column="detecttype" property="detecttype" jdbcType="VARCHAR" />
-    <result column="amt" property="amt" jdbcType="INTEGER" />
-    <result column="detecttime" property="detecttime" jdbcType="VARCHAR" />
-  </resultMap>
-  <sql id="Base_Column_List" >
+<mapper namespace="com.cbhb.dao.mapper.DetectResultMapper">
+    <resultMap id="BaseResultMap" type="com.cbhb.dao.entity.DetectResult">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="cardnum" property="cardnum" jdbcType="VARCHAR"/>
+        <result column="date" property="date" jdbcType="VARCHAR"/>
+        <result column="message" property="message" jdbcType="VARCHAR"/>
+        <result column="detecttype" property="detecttype" jdbcType="VARCHAR"/>
+        <result column="amt" property="amt" jdbcType="INTEGER"/>
+        <result column="detecttime" property="detecttime" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
     id, cardnum, date, message, detecttype, amt, detecttime
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
-    <include refid="Base_Column_List" />
-    from detectresult
-    where id = #{id,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from detectresult
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByDate" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from detectresult
+        where date=#{date,jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from detectresult
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.cbhb.dao.entity.DetectResult" >
+
+    <delete id="deleteDuplicateData">
+    DELETE
+FROM
+	detectresult
+WHERE
+	( cardnum, date, detecttype ) IN (
+	SELECT
+		t.cardnum,
+		t.date,
+		t.detecttype
+	FROM
+		(
+		SELECT
+			cardnum,
+			date,
+			detecttype
+		FROM
+			detectresult
+		GROUP BY
+			cardnum,
+			date,
+			detecttype
+		HAVING
+			count( 1 ) > 1
+		) t
+	)
+	AND id NOT IN (
+	SELECT
+		dt.minid
+	FROM
+	( SELECT min( id ) AS minid FROM detectresult GROUP BY cardnum, date, detecttype HAVING count( 1 ) > 1 ) dt
+	)
+  </delete>
+
+    <insert id="insert" parameterType="com.cbhb.dao.entity.DetectResult">
     insert into detectresult (id, cardnum, date, 
       message, detecttype, amt, 
       detecttime)
@@ -31,98 +74,98 @@
       #{message,jdbcType=VARCHAR}, #{detecttype,jdbcType=VARCHAR}, #{amt,jdbcType=INTEGER}, 
       #{detecttime,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.cbhb.dao.entity.DetectResult" >
-    insert into detectresult
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
-      <if test="cardnum != null" >
-        cardnum,
-      </if>
-      <if test="date != null" >
-        date,
-      </if>
-      <if test="message != null" >
-        message,
-      </if>
-      <if test="detecttype != null" >
-        detecttype,
-      </if>
-      <if test="amt != null" >
-        amt,
-      </if>
-      <if test="detecttime != null" >
-        detecttime,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=INTEGER},
-      </if>
-      <if test="cardnum != null" >
-        #{cardnum,jdbcType=VARCHAR},
-      </if>
-      <if test="date != null" >
-        #{date,jdbcType=VARCHAR},
-      </if>
-      <if test="message != null" >
-        #{message,jdbcType=VARCHAR},
-      </if>
-      <if test="detecttype != null" >
-        #{detecttype,jdbcType=VARCHAR},
-      </if>
-      <if test="amt != null" >
-        #{amt,jdbcType=INTEGER},
-      </if>
-      <if test="detecttime != null" >
-        #{detecttime,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
+    <insert id="insertSelective" parameterType="com.cbhb.dao.entity.DetectResult">
+        insert into detectresult
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="cardnum != null">
+                cardnum,
+            </if>
+            <if test="date != null">
+                date,
+            </if>
+            <if test="message != null">
+                message,
+            </if>
+            <if test="detecttype != null">
+                detecttype,
+            </if>
+            <if test="amt != null">
+                amt,
+            </if>
+            <if test="detecttime != null">
+                detecttime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="cardnum != null">
+                #{cardnum,jdbcType=VARCHAR},
+            </if>
+            <if test="date != null">
+                #{date,jdbcType=VARCHAR},
+            </if>
+            <if test="message != null">
+                #{message,jdbcType=VARCHAR},
+            </if>
+            <if test="detecttype != null">
+                #{detecttype,jdbcType=VARCHAR},
+            </if>
+            <if test="amt != null">
+                #{amt,jdbcType=INTEGER},
+            </if>
+            <if test="detecttime != null">
+                #{detecttime,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
 
-  <insert id="insertForeach" parameterType="java.util.List" useGeneratedKeys="false">
-    insert into detectresult
-    ( id,cardnum,date,message,detecttype,amt,detecttime)
-    values
-    <foreach collection="list" item="item" index="index" separator=",">
-      (
-      #{item.id},
-      #{item.cardnum},
-      #{item.date},
-      #{item.message},
-      #{item.detecttype},
-      #{item.amt},
-      #{item.detecttime}
-      )
-    </foreach>
-  </insert>
+    <insert id="insertForeach" parameterType="java.util.List" useGeneratedKeys="false">
+        insert into detectresult
+        ( id,cardnum,date,message,detecttype,amt,detecttime)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            #{item.cardnum},
+            #{item.date},
+            #{item.message},
+            #{item.detecttype},
+            #{item.amt},
+            #{item.detecttime}
+            )
+        </foreach>
+    </insert>
 
-  <update id="updateByPrimaryKeySelective" parameterType="com.cbhb.dao.entity.DetectResult" >
-    update detectresult
-    <set >
-      <if test="cardnum != null" >
-        cardnum = #{cardnum,jdbcType=VARCHAR},
-      </if>
-      <if test="date != null" >
-        date = #{date,jdbcType=VARCHAR},
-      </if>
-      <if test="message != null" >
-        message = #{message,jdbcType=VARCHAR},
-      </if>
-      <if test="detecttype != null" >
-        detecttype = #{detecttype,jdbcType=VARCHAR},
-      </if>
-      <if test="amt != null" >
-        amt = #{amt,jdbcType=INTEGER},
-      </if>
-      <if test="detecttime != null" >
-        detecttime = #{detecttime,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.cbhb.dao.entity.DetectResult" >
+    <update id="updateByPrimaryKeySelective" parameterType="com.cbhb.dao.entity.DetectResult">
+        update detectresult
+        <set>
+            <if test="cardnum != null">
+                cardnum = #{cardnum,jdbcType=VARCHAR},
+            </if>
+            <if test="date != null">
+                date = #{date,jdbcType=VARCHAR},
+            </if>
+            <if test="message != null">
+                message = #{message,jdbcType=VARCHAR},
+            </if>
+            <if test="detecttype != null">
+                detecttype = #{detecttype,jdbcType=VARCHAR},
+            </if>
+            <if test="amt != null">
+                amt = #{amt,jdbcType=INTEGER},
+            </if>
+            <if test="detecttime != null">
+                detecttime = #{detecttime,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.cbhb.dao.entity.DetectResult">
     update detectresult
     set cardnum = #{cardnum,jdbcType=VARCHAR},
       date = #{date,jdbcType=VARCHAR},

@@ -11,8 +11,10 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -85,6 +87,27 @@ public class DetectService {
         if(list.size()>0) {
             detectResultMapper.insertForeach(list);
         }
+    }
+
+    public List<DetectResult> search(String date){
+//        DetectResult detectResult = detectResultMapper.selectByPrimaryKey(77981);
+//        return detectResult;
+        List<DetectResult> detectResults = detectResultMapper.selectByDate(date);
+        return detectResults;
+    }
+
+    public Set<String> filter90cardnum(){
+        LocalDate localDate = LocalDate.now();
+        LocalDate minusDays = localDate.minusDays(89);
+        String date = minusDays.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+//        Set<String> cardnumSet = new HashSet();
+        Set<String> detectResults = search(date).stream().filter(dr->dr.getAmt()>0).map(DetectResult::getCardnum).collect(Collectors.toSet());
+        return detectResults;
+    }
+
+    public boolean isSafe(String cardnum,String logfilepath){
+        Detect detect = tl.get();
+        return detect.isSecurityIn90(cardnum,logfilepath);
     }
 
 

@@ -19,4 +19,6 @@ public interface DetectResultMapper {
     int updateByPrimaryKey(DetectResult record);
 
     int insertForeach(List<DetectResult> list);
+
+    List<DetectResult> selectByDate(String date);
 }

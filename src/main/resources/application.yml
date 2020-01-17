@@ -1,5 +1,6 @@
 spring:
   datasource:
+    name: detectds
     username: root
     password: root
     url: jdbc:mysql://192.168.123.11:3306/test?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
@@ -11,6 +12,32 @@ spring:
     mode: HTML
     suffix: .html
     prefix: classpath:/templates/
+  quartz:
+    properties:
+      org:
+        quartz:
+#          datasource: detectds
+          scheduler:
+            instanceName: clusteredScheduler
+            instanceId: AUTO
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            tablePrefix: QRTZ_
+            isClustered: false
+            clusterCheckinInterval: 10000
+            useProperties: false
+#            dsName: detectds
+            dataSource: detectds
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 10
+            threadPriority: 5
+            threadsInheritContextClassLoaderOfInitializingThread: true
+    job-store-type: jdbc
+  profiles:
+    active: ${spring.profiles.active}
+
 mybatis:
   mapper-locations: classpath*:com/cbhb/dao/**/*.xml
   type-aliases-package: com.cbhb.dao.entity
@@ -23,5 +50,6 @@ logging:
 
 logfilepath: d:/test/
 imgPath: d:/test/
+pdfPath: d:/fp/
 server:
-  port: 8888
+  port: 8813

@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Detect {
 
@@ -35,6 +36,8 @@ public class Detect {
 
     public static String DETECT_PAGE="http://www.shenzhentong.com/service/fplist_101007009_";
 
+    public static String DETAIL_PAGE="http://www.shenzhentong.com/Ajax/ElectronicInvoiceAjax.aspx";
+
      CloseableHttpClient httpClient = null;
 
      CookieStore cookieStore = null;
@@ -45,15 +48,16 @@ public class Detect {
     public static void main(String[] args) throws URISyntaxException {
 
 
+        Detect detect = new Detect("d:/");
+        System.out.println(detect.isSecurityIn90("441421291", "d:/"));
 
 
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-            LocalDate localDate = LocalDate.now();
-            System.out.println(localDate.format(formatter));
-
-            System.out.println(localDate.plusDays(1).format(formatter));
-            System.out.println(localDate.minusDays(31));
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+//            LocalDate localDate = LocalDate.now();
+//            System.out.println(localDate.format(formatter));
+//
+//            System.out.println(localDate.plusDays(1).format(formatter));
+//            System.out.println(localDate.minusDays(31));
 
 
 
@@ -244,6 +248,19 @@ public class Detect {
         }
 
         return list;
+    }
+
+    //看看在90天内是否安全
+    public boolean isSecurityIn90(String cardnum,String logfilepath){
+        List<DetectResultDto> detectResultDtos = detectCard90(cardnum, logfilepath);
+        //含有开票记录
+        System.out.println(detectResultDtos.size());
+
+        int canCount  = detectResultDtos.stream().filter(drd->drd.getDetectType()== DetectResultDto.DetectType.CAN).collect(Collectors.toList()).size();
+        int alreadyCount = detectResultDtos.stream().filter(drd->drd.getDetectType()== DetectResultDto.DetectType.ALREADY).collect(Collectors.toList()).size();
+        System.out.printf("can:%d \n already %d",canCount,alreadyCount);
+        return canCount>4 && alreadyCount==0;
+//        return detectResultDtos.stream()>4 && detectResultDtos.stream().filter(drd->drd.getDetectType()== DetectResultDto.DetectType.ALREADY).collect(Collectors.toList()).size()==0;
     }
 
 }
