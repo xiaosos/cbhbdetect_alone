@@ -25,16 +25,16 @@ public class QuartzConfiguration {
 //        SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(10).repeatForever();
 //        return TriggerBuilder.newTrigger().forJob(pdfJobDetail()).withIdentity("pdfjob").withSchedule(scheduleBuilder).build();
 //    }
-    @Bean
-    public JobDetail cronJobDetail(){
-        return JobBuilder.newJob(CronJob.class).withIdentity("cronJob").storeDurably().build();
-    }
-
-    @Bean
-    public Trigger cronTrigger(){
-        CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule("0 30 23 * * ? *").withMisfireHandlingInstructionDoNothing();
-        return TriggerBuilder.newTrigger().forJob(cronJobDetail()).withIdentity("crontrigger").withSchedule(scheduleBuilder).build();
-    }
+//    @Bean
+//    public JobDetail cronJobDetail(){
+//        return JobBuilder.newJob(CronJob.class).withIdentity("cronJob").storeDurably().build();
+//    }
+//
+//    @Bean
+//    public Trigger cronTrigger(){
+//        CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule("0 30 23 * * ? *").withMisfireHandlingInstructionDoNothing();
+//        return TriggerBuilder.newTrigger().forJob(cronJobDetail()).withIdentity("crontrigger").withSchedule(scheduleBuilder).build();
+//    }
 
 
 

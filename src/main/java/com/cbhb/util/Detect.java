@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 
 public class Detect {
 
+
+
     public static String FIRST_PAGE="http://www.shenzhentong.com/service/invoice_101007009.html";
 
     public static String YZM_PAGE="http://www.shenzhentong.com/ajax/WaterMark.ashx";
@@ -37,6 +39,16 @@ public class Detect {
     public static String DETECT_PAGE="http://www.shenzhentong.com/service/fplist_101007009_";
 
     public static String DETAIL_PAGE="http://www.shenzhentong.com/Ajax/ElectronicInvoiceAjax.aspx";
+    public static String FPPATH= System.getProperty("os.name").toLowerCase().contains("windows")?"d:/fp/":"/tmp/fp/";
+
+    public static String nowMonth = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM"));
+
+    static {
+        File file = new File(FPPATH+nowMonth);
+        if (!file.exists()) {
+            file.mkdir();
+        }
+    }
 
      CloseableHttpClient httpClient = null;
 
@@ -45,26 +57,7 @@ public class Detect {
      private String imgPath;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-    public static void main(String[] args) throws URISyntaxException {
 
-
-        Detect detect = new Detect("d:/");
-        System.out.println(detect.isSecurityIn90("441421291", "d:/"));
-
-
-//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-//            LocalDate localDate = LocalDate.now();
-//            System.out.println(localDate.format(formatter));
-//
-//            System.out.println(localDate.plusDays(1).format(formatter));
-//            System.out.println(localDate.minusDays(31));
-
-
-
-        //开过的含有:发票信息
-        //不能开的含有:display:none
-
-    }
 
     public Detect(String imgPath){
         this.imgPath = imgPath;
@@ -262,5 +255,10 @@ public class Detect {
         return canCount>4 && alreadyCount==0;
 //        return detectResultDtos.stream()>4 && detectResultDtos.stream().filter(drd->drd.getDetectType()== DetectResultDto.DetectType.ALREADY).collect(Collectors.toList()).size()==0;
     }
-
+    public static void main(String[] args) throws URISyntaxException {
+        Detect detect = new Detect("d:/");
+        System.out.println(detect.isSecurityIn90("441421291", "d:/"));
+        //开过的含有:发票信息
+        //不能开的含有:display:none
+    }
 }

@@ -3,6 +3,8 @@ package com.cbhb.job;
 import com.cbhb.com.cbhb.service.DetectService;
 import com.cbhb.util.DetectAndDetail;
 import com.cbhb.util.DetectResultDto;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +26,10 @@ public class CronJob extends QuartzJobBean {
     private String imgPath;
     @Value("${pdfPath}")
     private String pdfPath;
-
+    Log log = LogFactory.getLog(CronJob.class);
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+
         System.out.println("====="+System.currentTimeMillis()+"============CronJob start  =============");
         LocalDate localDate = LocalDate.now();
         LocalDate minusDays = localDate.minusDays(89);
@@ -51,6 +54,8 @@ public class CronJob extends QuartzJobBean {
 
                 }
             }catch (Exception e){
+//                e.printStackTrace();
+                log.info(e);
                 continue;
             }
         }
